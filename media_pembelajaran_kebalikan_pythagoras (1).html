@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorium Kebalikan Teorema Pythagoras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+            transition: transform 0.1s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-12">
+
+    <!-- Header Utama -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-800 text-white py-6 px-4 shadow-lg mb-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <span class="bg-blue-500/30 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider border border-blue-400/30">
+                    Media Pembelajaran Matematika SMP
+                </span>
+                <h1 class="text-2xl md:text-3xl font-extrabold mt-1 tracking-tight">
+                    Kebalikan Teorema Pythagoras
+                </h1>
+                <p class="text-blue-100 text-sm mt-1">
+                    Eksplorasi hubungan panjang sisi segitiga dan penentuan jenis sudutnya secara interaktif
+                </p>
+            </div>
+            <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-xs font-medium">
+                <span>📍 Sisi Terpanjang = <strong>c</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Panel Kiri: Input Parameter & Kontrol -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Card Uji Cepat Contoh -->
+            <div class="bg-white p-5 rounded-2xl custom-shadow border border-slate-100">
+                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 mb-3">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Uji Cepat Contoh Segitiga
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <button onclick="setPreset(3, 4, 5)" class="px-3 py-2 text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition text-center">
+                        3, 4, 5 <span class="block text-[10px] text-emerald-600 font-normal">(Siku-siku)</span>
+                    </button>
+                    <button onclick="setPreset(5, 12, 13)" class="px-3 py-2 text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition text-center">
+                        5, 12, 13 <span class="block text-[10px] text-emerald-600 font-normal">(Siku-siku)</span>
+                    </button>
+                    <button onclick="setPreset(8, 15, 17)" class="px-3 py-2 text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition text-center">
+                        8, 15, 17 <span class="block text-[10px] text-emerald-600 font-normal">(Siku-siku)</span>
+                    </button>
+                    <button onclick="setPreset(5, 5, 8)" class="px-3 py-2 text-xs font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg border border-amber-200 transition text-center">
+                        5, 5, 8 <span class="block text-[10px] text-amber-600 font-normal">(Tumpul)</span>
+                    </button>
+                    <button onclick="setPreset(6, 7, 8)" class="px-3 py-2 text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg border border-blue-200 transition text-center">
+                        6, 7, 8 <span class="block text-[10px] text-blue-600 font-normal">(Lancip)</span>
+                    </button>
+                    <button onclick="setPreset(4, 5, 10)" class="px-3 py-2 text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg border border-rose-200 transition text-center">
+                        4, 5, 10 <span class="block text-[10px] text-rose-600 font-normal">(Bukan Segitiga)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Input Panjang Sisi -->
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col gap-5">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                        Input Panjang Sisi
+                    </h2>
+                    <span class="text-xs text-slate-400">Desimal diperbolehkan</span>
+                </div>
+
+                <!-- Control Sisi A -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center">
+                        <label for="inputA" class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> Sisi A
+                        </label>
+                        <input type="text" id="inputA" value="8" oninput="onInputChange('A')" class="w-28 px-3 py-1.5 text-right font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                    </div>
+                    <input type="range" id="sliderA" value="8" step="0.1" oninput="onSliderChange('A')" class="w-full accent-blue-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p id="errorA" class="text-xs text-rose-500 font-medium hidden">Isi dengan angka lebih dari 0</p>
+                </div>
+
+                <!-- Control Sisi B -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center">
+                        <label for="inputB" class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-indigo-600 inline-block"></span> Sisi B
+                        </label>
+                        <input type="text" id="inputB" value="15" oninput="onInputChange('B')" class="w-28 px-3 py-1.5 text-right font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    </div>
+                    <input type="range" id="sliderB" value="15" step="0.1" oninput="onSliderChange('B')" class="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p id="errorB" class="text-xs text-rose-500 font-medium hidden">Isi dengan angka lebih dari 0</p>
+                </div>
+
+                <!-- Control Sisi C -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center">
+                        <label for="inputC" class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-violet-600 inline-block"></span> Sisi C
+                        </label>
+                        <input type="text" id="inputC" value="17" oninput="onInputChange('C')" class="w-28 px-3 py-1.5 text-right font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:bg-white transition">
+                    </div>
+                    <input type="range" id="sliderC" value="17" step="0.1" oninput="onSliderChange('C')" class="w-full accent-violet-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p id="errorC" class="text-xs text-rose-500 font-medium hidden">Isi dengan angka lebih dari 0</p>
+                </div>
+
+                <!-- Tombol Aksi Cek & Catat -->
+                <button onclick="recordCurrentData()" class="mt-2 w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Cek & Catat Data ke Tabel
+                </button>
+            </div>
+
+            <!-- Card Misi Eksplorasi -->
+            <div class="bg-white p-5 rounded-2xl custom-shadow border border-slate-100">
+                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 mb-3">
+                    🎯 Misi Eksplorasi
+                </h2>
+                <div class="space-y-2.5">
+                    <div id="mission1" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex justify-between items-center transition">
+                        <div>
+                            <p class="font-bold text-slate-700">Misi 1: Tripel Pythagoras</p>
+                            <p class="text-slate-500">Temukan 3 kombinasi segitiga siku-siku berbeda</p>
+                        </div>
+                        <span id="mission1-badge" class="px-2.5 py-1 bg-slate-200 text-slate-600 rounded-full font-bold text-[11px]">0/3</span>
+                    </div>
+                    <div id="mission2" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex justify-between items-center transition">
+                        <div>
+                            <p class="font-bold text-slate-700">Misi 2: Segitiga Tumpul</p>
+                            <p class="text-slate-500">Buat segitiga dengan sudut terbesar > 90°</p>
+                        </div>
+                        <span id="mission2-badge" class="px-2.5 py-1 bg-slate-200 text-slate-600 rounded-full font-bold text-[11px]">Belum</span>
+                    </div>
+                    <div id="mission3" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex justify-between items-center transition">
+                        <div>
+                            <p class="font-bold text-slate-700">Misi 3: Segitiga Lancip</p>
+                            <p class="text-slate-500">Buat segitiga dengan semua sudut < 90°</p>
+                        </div>
+                        <span id="mission3-badge" class="px-2.5 py-1 bg-slate-200 text-slate-600 rounded-full font-bold text-[11px]">Belum</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Panel Kanan: Visualisasi Diagram SVG & Analisis Matematika -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+
+            <!-- Card Visualisasi Diagram Segitiga -->
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Visualisasi Diagram Segitiga
+                    </h2>
+                    <span id="badgeTypeHeader" class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">
+                        Segitiga Siku-siku
+                    </span>
+                </div>
+
+                <!-- Canvas SVG dengan Auto-scaling -->
+                <div class="w-full h-80 bg-slate-900 rounded-xl p-2 relative overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner">
+                    <svg id="triangleSvg" viewBox="0 0 500 350" class="w-full h-full">
+                        <!-- Dynamic SVG content drawn via JS -->
+                    </svg>
+
+                    <!-- Overlay Pesan Jika Tidak Valid / Error -->
+                    <div id="invalidOverlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center hidden">
+                        <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <h3 id="overlayTitle" class="text-base font-bold text-rose-300">Syarat Segitiga Tidak Terpenuhi</h3>
+                        <p id="overlayDesc" class="text-xs text-slate-300 mt-1 max-w-sm">
+                            Jumlah dua sisi terpendek harus lebih besar dari sisi terpanjang (a + b > c).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Perhitungan & Analisis Kebalikan Pythagoras -->
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col gap-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 pb-2 border-b border-slate-100">
+                    <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Analisis Kebalikan Teorema Pythagoras
+                </h2>
+
+                <!-- Ringkasan Penetapan Sisi Terpanjang -->
+                <div id="sideAssignmentText" class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 font-medium">
+                    Sisi terpanjang secara otomatis ditetapkan sebagai <strong>c</strong>.
+                </div>
+
+                <!-- Komparasi Kuadrat -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">a² + b²</span>
+                        <div id="valA2B2" class="text-xl font-extrabold text-blue-700 mt-1">289</div>
+                        <span id="detailA2B2" class="text-[11px] text-slate-400 block mt-0.5">8² + 15² = 64 + 225</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hubungan</span>
+                        <div id="relSymbol" class="text-2xl font-black text-indigo-600 mt-1">=</div>
+                        <span id="relText" class="text-[11px] text-indigo-700 font-bold block mt-0.5">Sama Dengan</span>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">c²</span>
+                        <div id="valC2" class="text-xl font-extrabold text-violet-700 mt-1">289</div>
+                        <span id="detailC2" class="text-[11px] text-slate-400 block mt-0.5">17²</span>
+                    </div>
+                </div>
+
+                <!-- Kesimpulan Kebalikan Teorema -->
+                <div id="conclusionBox" class="p-4 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 flex flex-col gap-1">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-sm">Kesimpulan Kebalikan Pythagoras:</span>
+                        <span id="angleValue" class="text-xs font-extrabold bg-emerald-200/60 px-2.5 py-1 rounded-md text-emerald-900">
+                            Sudut Terbesar = 90,0°
+                        </span>
+                    </div>
+                    <p id="conclusionText" class="text-xs text-emerald-800 leading-relaxed mt-1">
+                        Karena <strong>a² + b² = c²</strong>, maka segitiga ini adalah <strong>Segitiga Siku-siku</strong> (sudut terbesar tepat 90° di hadapan sisi c).
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section Bawah: Tabel Pencatatan Data -->
+        <section class="lg:col-span-12">
+            <div class="bg-white p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-2 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Tabel Pencatatan Data Eksplorasi
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Menyimpan data persis sesuai angka yang diketik (mencegah duplikasi otomatis)
+                        </p>
+                    </div>
+                    <button onclick="clearTable()" class="px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 rounded-lg transition flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Bersihkan Tabel
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-xs text-left text-slate-700">
+                        <thead class="bg-slate-100 text-slate-700 uppercase font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-center">No</th>
+                                <th class="px-4 py-3">Sisi Pendek (a)</th>
+                                <th class="px-4 py-3">Sisi Pendek (b)</th>
+                                <th class="px-4 py-3">Sisi Terpanjang (c)</th>
+                                <th class="px-4 py-3">a² + b²</th>
+                                <th class="px-4 py-3">c²</th>
+                                <th class="px-4 py-3 text-center">Hubungan</th>
+                                <th class="px-4 py-3">Jenis Segitiga</th>
+                                <th class="px-4 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody" class="divide-y divide-slate-200 bg-white">
+                            <!-- Rows dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * State Aplikasi & Tabel
+         */
+        let recordedDataList = [];
+        let completedMissions = { m1Set: new Set(), m2: false, m3: false };
+
+        /**
+         * Mengurai input teks (mengakomodasi koma ',' atau titik '.')
+         */
+        function parseInputValue(str) {
+            if (typeof str !== 'string') str = String(str);
+            const sanitized = str.replace(',', '.').trim();
+            const val = parseFloat(sanitized);
+            return isNaN(val) ? null : val;
+        }
+
+        /**
+         * Memformat angka untuk tampilan label (maksimal 2 desimal)
+         */
+        function formatNum(num) {
+            if (num === null || isNaN(num)) return '-';
+            return Number(num.toFixed(2)).toLocaleString('id-ID');
+        }
+
+        /**
+         * Handler saat pengguna mengetik di kotak angka
+         */
+        function onInputChange(key) {
+            updateApp();
+        }
+
+        /**
+         * Handler saat slider digeser
+         */
+        function onSliderChange(key) {
+            const slider = document.getElementById('slider' + key);
+            const input = document.getElementById('input' + key);
+            input.value = slider.value;
+            updateApp();
+        }
+
+        /**
+         * Memasang contoh angka cepat
+         */
+        function setPreset(a, b, c) {
+            document.getElementById('inputA').value = a;
+            document.getElementById('inputB').value = b;
+            document.getElementById('inputC').value = c;
+            updateApp();
+        }
+
+        /**
+         * Pembaruan Utama Aplikasi
+         */
+        function updateApp() {
+            // 1. Ambil & Validasi Nilai Input
+            const rawA = document.getElementById('inputA').value;
+            const rawB = document.getElementById('inputB').value;
+            const rawC = document.getElementById('inputC').value;
+
+            const valA = parseInputValue(rawA);
+            const valB = parseInputValue(rawB);
+            const valC = parseInputValue(rawC);
+
+            const errA = document.getElementById('errorA');
+            const errB = document.getElementById('errorB');
+            const errC = document.getElementById('errorC');
+
+            let isValidInput = true;
+
+            if (valA === null || valA <= 0) {
+                errA.classList.remove('hidden');
+                document.getElementById('inputA').classList.add('border-rose-500');
+                isValidInput = false;
+            } else {
+                errA.classList.add('hidden');
+                document.getElementById('inputA').classList.remove('border-rose-500');
+            }
+
+            if (valB === null || valB <= 0) {
+                errB.classList.remove('hidden');
+                document.getElementById('inputB').classList.add('border-rose-500');
+                isValidInput = false;
+            } else {
+                errB.classList.add('hidden');
+                document.getElementById('inputB').classList.remove('border-rose-500');
+            }
+
+            if (valC === null || valC <= 0) {
+                errC.classList.remove('hidden');
+                document.getElementById('inputC').classList.add('border-rose-500');
+                isValidInput = false;
+            } else {
+                errC.classList.add('hidden');
+                document.getElementById('inputC').classList.remove('border-rose-500');
+            }
+
+            // Jika input tidak valid, tampilkan error overlay dan hentikan kalkulasi
+            if (!isValidInput) {
+                showErrorOverlay('Input Tidak Valid', 'Semua kotak angka harus diisi dengan bilangan positif lebih dari 0.');
+                return;
+            }
+
+            // 2. Sesuaikan Batas Maksimum Slider Otomatis (Tanpa Clamping nilai input)
+            const maxInputVal = Math.max(valA, valB, valC);
+            const dynamicSliderMax = Math.max(15, maxInputVal * 1.5);
+
+            ['A', 'B', 'C'].forEach((k, idx) => {
+                const val = [valA, valB, valC][idx];
+                const slider = document.getElementById('slider' + k);
+                slider.max = dynamicSliderMax;
+                slider.value = val;
+            });
+
+            // 3. Tentukan Sisi Terpanjang Sebagai 'c', Dua Lainnya Sebagai 'a' & 'b'
+            // Kita urutkan ketiga nilai untuk penetapan Kebalikan Pythagoras
+            const sorted = [
+                { originalKey: 'A', val: valA },
+                { originalKey: 'B', val: valB },
+                { originalKey: 'C', val: valC }
+            ].sort((x, y) => x.val - y.val);
+
+            const sideA = sorted[0].val; // Sisi terpendek 1
+            const sideB = sorted[1].val; // Sisi terpendek 2
+            const sideC = sorted[2].val; // Sisi terpanjang
+
+            document.getElementById('sideAssignmentText').innerHTML = `
+                Sisi terpanjang secara otomatis ditetapkan sebagai <strong>c = ${formatNum(sideC)}</strong> (Sisi terpendek: a = ${formatNum(sideA)}, b = ${formatNum(sideB)}).
+            `;
+
+            // 4. Periksa Syarat Segitiga (a + b > c)
+            if (sideA + sideB <= sideC) {
+                showErrorOverlay(
+                    'Tidak Memenuhi Syarat Segitiga',
+                    `Jumlah dua sisi terpendek (${formatNum(sideA)} + ${formatNum(sideB)} = ${formatNum(sideA + sideB)}) tidak lebih besar dari sisi terpanjang (${formatNum(sideC)}). Segitiga tidak dapat terbentuk.`
+                );
+                return;
+            }
+
+            // Sembunyikan overlay jika valid
+            document.getElementById('invalidOverlay').classList.add('hidden');
+
+            // 5. Kalkulasi Matematika & Kebalikan Pythagoras
+            const a2 = sideA * sideA;
+            const b2 = sideB * sideB;
+            const c2 = sideC * sideC;
+            const sumA2B2 = a2 + b2;
+
+            // Hitung Sudut Terbesar (di hadapan sisi c) menggunakan Aturan Kosinus
+            // cos(gamma) = (a^2 + b^2 - c^2) / (2 * a * b)
+            let cosGamma = (a2 + b2 - c2) / (2 * sideA * sideB);
+            // Clamp floating point inaccuracy
+            cosGamma = Math.max(-1, Math.min(1, cosGamma));
+            const angleRad = Math.acos(cosGamma);
+            const angleDeg = angleRad * (180 / Math.PI);
+
+            // Klasifikasi Jenis Segitiga (Toleransi floating point 1e-6)
+            const diff = Math.abs(sumA2B2 - c2);
+            let triType = '';
+            let relSymbol = '';
+            let relText = '';
+            let conclusionText = '';
+            let bgClass = '', textClass = '', badgeClass = '';
+
+            if (diff < 0.00001) {
+                triType = 'Segitiga Siku-siku';
+                relSymbol = '=';
+                relText = 'Sama Dengan';
+                conclusionText = `Karena <strong>a² + b² = c²</strong> (${formatNum(sumA2B2)} = ${formatNum(c2)}), maka segitiga ini adalah <strong>Segitiga Siku-siku</strong> (sudut terbesar tepat 90,0°).`;
+                bgClass = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+                badgeClass = 'bg-emerald-100 text-emerald-800';
+            } else if (sumA2B2 > c2) {
+                triType = 'Segitiga Lancip';
+                relSymbol = '>';
+                relText = 'Lebih Besar';
+                conclusionText = `Karena <strong>a² + b² > c²</strong> (${formatNum(sumA2B2)} > ${formatNum(c2)}), maka segitiga ini adalah <strong>Segitiga Lancip</strong> (semua sudut < 90°).`;
+                bgClass = 'bg-blue-50 border-blue-200 text-blue-900';
+                badgeClass = 'bg-blue-100 text-blue-800';
+            } else {
+                triType = 'Segitiga Tumpul';
+                relSymbol = '<';
+                relText = 'Lebih Kecil';
+                conclusionText = `Karena <strong>a² + b² < c²</strong> (${formatNum(sumA2B2)} < ${formatNum(c2)}), maka segitiga ini adalah <strong>Segitiga Tumpul</strong> (sudut terbesar > 90°).`;
+                bgClass = 'bg-amber-50 border-amber-200 text-amber-900';
+                badgeClass = 'bg-amber-100 text-amber-800';
+            }
+
+            // Update UI Analisis
+            document.getElementById('badgeTypeHeader').className = `px-3 py-1 text-xs font-bold rounded-full ${badgeClass}`;
+            document.getElementById('badgeTypeHeader').innerText = triType;
+
+            document.getElementById('valA2B2').innerText = formatNum(sumA2B2);
+            document.getElementById('detailA2B2').innerText = `${formatNum(sideA)}² + ${formatNum(sideB)}²`;
+
+            document.getElementById('relSymbol').innerText = relSymbol;
+            document.getElementById('relText').innerText = relText;
+
+            document.getElementById('valC2').innerText = formatNum(c2);
+            document.getElementById('detailC2').innerText = `${formatNum(sideC)}²`;
+
+            const concBox = document.getElementById('conclusionBox');
+            concBox.className = `p-4 rounded-xl border flex flex-col gap-1 ${bgClass}`;
+            document.getElementById('conclusionText').innerHTML = conclusionText;
+            document.getElementById('angleValue').innerText = `Sudut Terbesar = ${formatNum(angleDeg)}°`;
+
+            // 6. Gambar Segitiga pada SVG
+            drawTriangleSVG(sideA, sideB, sideC, angleDeg, triType);
+        }
+
+        /**
+         * Menampilkan overlay kesalahan ketika input/segitiga tidak valid
+         */
+        function showErrorOverlay(title, desc) {
+            document.getElementById('overlayTitle').innerText = title;
+            document.getElementById('overlayDesc').innerText = desc;
+            document.getElementById('invalidOverlay').classList.remove('hidden');
+            
+            document.getElementById('badgeTypeHeader').className = 'px-3 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800';
+            document.getElementById('badgeTypeHeader').innerText = 'Tidak Valid';
+        }
+
+        /**
+         * Menggambar geometri segitiga pada SVG dengan auto-scaling
+         */
+        function drawTriangleSVG(a, b, c, largestAngleDeg, triType) {
+            const svg = document.getElementById('triangleSvg');
+            svg.innerHTML = '';
+
+            // Tentukan koordinat dasar (0,0) untuk A dan (c,0) untuk B
+            // Sudut di A (antara sisi b dan c)
+            // cos(alpha) = (b^2 + c^2 - a^2) / (2 * b * c)
+            let cosAlpha = (b * b + c * c - a * a) / (2 * b * c);
+            cosAlpha = Math.max(-1, Math.min(1, cosAlpha));
+            const alpha = Math.acos(cosAlpha);
+
+            const Ax = 0;
+            const Ay = 0;
+            const Bx = c;
+            const By = 0;
+            const Cx = b * Math.cos(alpha);
+            const Cy = b * Math.sin(alpha);
+
+            // Bounding box asli
+            const minX = Math.min(Ax, Bx, Cx);
+            const maxX = Math.max(Ax, Bx, Cx);
+            const minY = Math.min(Ay, By, Cy);
+            const maxY = Math.max(Ay, By, Cy);
+
+            const origW = maxX - minX;
+            const origH = maxY - minY;
+
+            // Dimensi ViewBox SVG
+            const svgW = 500;
+            const svgH = 350;
+            const padding = 65;
+
+            const scale = Math.min(
+                (svgW - 2 * padding) / origW,
+                (svgH - 2 * padding) / (origH || 1)
+            );
+
+            // Fungsi transformasi titik koordinat ke sistem piksel SVG
+            function transform(x, y) {
+                const px = padding + (x - minX) * scale + (svgW - 2 * padding - origW * scale) / 2;
+                const py = (svgH - padding) - (y - minY) * scale - (svgH - 2 * padding - origH * scale) / 2;
+                return { x: px, y: py };
+            }
+
+            const pA = transform(Ax, Ay);
+            const pB = transform(Bx, By);
+            const pC = transform(Cx, Cy);
+
+            // Poligon Segitiga
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', `${pA.x},${pA.y} ${pB.x},${pB.y} ${pC.x},${pC.y}`);
+            polygon.setAttribute('fill', 'rgba(99, 102, 241, 0.15)');
+            polygon.setAttribute('stroke', '#818cf8');
+            polygon.setAttribute('stroke-width', '3');
+            polygon.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(polygon);
+
+            // Simbol Sudut Siku-siku atau Busur Sudut di Titik C
+            if (Math.abs(largestAngleDeg - 90) < 0.01) {
+                // Gambar simbol kotak siku-siku di titik C
+                const size = 18;
+                const vCA = { x: pA.x - pC.x, y: pA.y - pC.y };
+                const vCB = { x: pB.x - pC.x, y: pB.y - pC.y };
+                const lenCA = Math.hypot(vCA.x, vCA.y);
+                const lenCB = Math.hypot(vCB.x, vCB.y);
+
+                const uCA = { x: vCA.x / lenCA, y: vCA.y / lenCA };
+                const uCB = { x: vCB.x / lenCB, y: vCB.y / lenCB };
+
+                const q1 = { x: pC.x + uCA.x * size, y: pC.y + uCA.y * size };
+                const q2 = { x: q1.x + uCB.x * size, y: q1.y + uCB.y * size };
+                const q3 = { x: pC.x + uCB.x * size, y: pC.y + uCB.y * size };
+
+                const sq = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                sq.setAttribute('points', `${q1.x},${q1.y} ${q2.x},${q2.y} ${q3.x},${q3.y}`);
+                sq.setAttribute('fill', 'none');
+                sq.setAttribute('stroke', '#34d399');
+                sq.setAttribute('stroke-width', '2 shadow');
+                svg.appendChild(sq);
+            }
+
+            // Teks Label Sisi
+            addTextLabel(svg, (pA.x + pB.x)/2, pA.y + 22, `c = ${formatNum(c)}`, '#a78bfa');
+            addTextLabel(svg, (pA.x + pC.x)/2 - 20, (pA.y + pC.y)/2, `b = ${formatNum(b)}`, '#818cf8');
+            addTextLabel(svg, (pB.x + pC.x)/2 + 20, (pB.y + pC.y)/2, `a = ${formatNum(a)}`, '#60a5fa');
+
+            // Label Titik Sudut
+            addTextLabel(svg, pA.x - 12, pA.y + 12, 'A', '#94a3b8', '12px');
+            addTextLabel(svg, pB.x + 12, pB.y + 12, 'B', '#94a3b8', '12px');
+            addTextLabel(svg, pC.x, pC.y - 14, `C (${formatNum(largestAngleDeg)}°)`, '#f43f5e', '13px', 'bold');
+        }
+
+        function addTextLabel(svg, x, y, text, color, fontSize = '12px', fontWeight = 'normal') {
+            const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            txt.setAttribute('x', x);
+            txt.setAttribute('y', y);
+            txt.setAttribute('fill', color);
+            txt.setAttribute('font-size', fontSize);
+            txt.setAttribute('font-weight', fontWeight);
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('dominant-baseline', 'middle');
+            txt.textContent = text;
+            svg.appendChild(txt);
+        }
+
+        /**
+         * Pencatatan Data ke Tabel (Mencegah Duplikasi)
+         */
+        function recordCurrentData() {
+            const valA = parseInputValue(document.getElementById('inputA').value);
+            const valB = parseInputValue(document.getElementById('inputB').value);
+            const valC = parseInputValue(document.getElementById('inputC').value);
+
+            if (!valA || !valB || !valC || valA <= 0 || valB <= 0 || valC <= 0) {
+                alert('Tidak dapat mencatat. Pastikan semua input bernilai angka positif!');
+                return;
+            }
+
+            const sorted = [valA, valB, valC].sort((x, y) => x - y);
+            const a = sorted[0];
+            const b = sorted[1];
+            const c = sorted[2];
+
+            if (a + b <= c) {
+                alert('Data tidak valid sebagai segitiga (a + b ≤ c).');
+                return;
+            }
+
+            // Cek Duplikasi (Baris yang sama persis tidak dicatat dua kali)
+            const isDuplicate = recordedDataList.some(item => 
+                Math.abs(item.a - a) < 0.0001 &&
+                Math.abs(item.b - b) < 0.0001 &&
+                Math.abs(item.c - c) < 0.0001
+            );
+
+            if (isDuplicate) {
+                alert(`Data sisi (${formatNum(a)}, ${formatNum(b)}, ${formatNum(c)}) sudah dicatat sebelumnya dalam tabel!`);
+                return;
+            }
+
+            const a2b2 = a*a + b*b;
+            const c2 = c*c;
+            const diff = Math.abs(a2b2 - c2);
+
+            let rel = '=';
+            let triType = 'Segitiga Siku-siku';
+
+            if (diff >= 0.00001) {
+                if (a2b2 > c2) {
+                    rel = '>';
+                    triType = 'Segitiga Lancip';
+                } else {
+                    rel = '<';
+                    triType = 'Segitiga Tumpul';
+                }
+            }
+
+            recordedDataList.push({ a, b, c, a2b2, c2, rel, triType });
+            renderTable();
+            checkMissions(triType, a, b, c);
+        }
+
+        /**
+         * Render Tabel Pencatatan Data
+         */
+        function renderTable() {
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+
+            if (recordedDataList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-6 text-center text-slate-400 italic">
+                            Belum ada data dicatat. Klik tombol "Cek & Catat Data ke Tabel" di atas.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            recordedDataList.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100 transition';
+                
+                let badgeStyle = 'bg-emerald-100 text-emerald-800';
+                if (item.triType === 'Segitiga Lancip') badgeStyle = 'bg-blue-100 text-blue-800';
+                if (item.triType === 'Segitiga Tumpul') badgeStyle = 'bg-amber-100 text-amber-800';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                    <td class="px-4 py-3 font-semibold text-slate-800">${formatNum(item.a)}</td>
+                    <td class="px-4 py-3 font-semibold text-slate-800">${formatNum(item.b)}</td>
+                    <td class="px-4 py-3 font-bold text-indigo-700">${formatNum(item.c)}</td>
+                    <td class="px-4 py-3 font-medium">${formatNum(item.a2b2)}</td>
+                    <td class="px-4 py-3 font-medium">${formatNum(item.c2)}</td>
+                    <td class="px-4 py-3 text-center font-black text-indigo-600 text-sm">${item.rel}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeStyle}">${item.triType}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="deleteRow(${idx})" class="text-rose-500 hover:text-rose-700 p-1 rounded transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteRow(idx) {
+            recordedDataList.splice(idx, 1);
+            renderTable();
+        }
+
+        function clearTable() {
+            if (recordedDataList.length === 0) return;
+            if (confirm('Bersihkan seluruh data di tabel pencatatan?')) {
+                recordedDataList = [];
+                renderTable();
+            }
+        }
+
+        /**
+         * Pembaruan Status Misi
+         */
+        function checkMissions(triType, a, b, c) {
+            if (triType === 'Segitiga Siku-siku') {
+                completedMissions.m1Set.add(`${a}-${b}-${c}`);
+                const count = completedMissions.m1Set.size;
+                const badge = document.getElementById('mission1-badge');
+                badge.innerText = `${Math.min(count, 3)}/3`;
+                if (count >= 3) {
+                    badge.className = 'px-2.5 py-1 bg-emerald-500 text-white rounded-full font-bold text-[11px]';
+                    badge.innerText = 'Selesai ✓';
+                }
+            } else if (triType === 'Segitiga Tumpul') {
+                completedMissions.m2 = true;
+                const badge = document.getElementById('mission2-badge');
+                badge.className = 'px-2.5 py-1 bg-emerald-500 text-white rounded-full font-bold text-[11px]';
+                badge.innerText = 'Selesai ✓';
+            } else if (triType === 'Segitiga Lancip') {
+                completedMissions.m3 = true;
+                const badge = document.getElementById('mission3-badge');
+                badge.className = 'px-2.5 py-1 bg-emerald-500 text-white rounded-full font-bold text-[11px]';
+                badge.innerText = 'Selesai ✓';
+            }
+        }
+
+        // Inisialisasi Aplikasi saat Halaman Dimuat
+        window.onload = function() {
+            updateApp();
+            renderTable();
+        };
+    </script>
+</body>
+</html>
